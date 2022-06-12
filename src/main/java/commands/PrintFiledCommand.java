@@ -6,12 +6,13 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class PrintFiledCommand implements Command {
+public class PrintFiledCommand implements Command, Serializable {
 
     public PrintFiledCommand() {
     }

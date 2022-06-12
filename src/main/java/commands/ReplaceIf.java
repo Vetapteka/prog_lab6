@@ -5,12 +5,13 @@ import model.MyCollection;
 import utils.Reader;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public abstract class ReplaceIf implements Command {
+public abstract class ReplaceIf implements Command, Serializable {
 
     private Integer id;
    private Flat flat;

@@ -5,12 +5,13 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class InfoCommand implements Command {
+public class InfoCommand implements Command, Serializable {
 
     public InfoCommand() {
     }

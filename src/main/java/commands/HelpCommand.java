@@ -4,11 +4,12 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class HelpCommand implements Command {
+public class HelpCommand implements Command, Serializable {
 
     private final LinkedHashMap<String, Command> commands;
     private String commandsString;

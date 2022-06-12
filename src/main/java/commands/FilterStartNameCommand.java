@@ -6,12 +6,13 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class FilterStartNameCommand implements Command {
+public class FilterStartNameCommand implements Command, Serializable {
     private String strStartName;
 
     public FilterStartNameCommand() {

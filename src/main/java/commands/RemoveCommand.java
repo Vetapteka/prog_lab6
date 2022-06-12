@@ -6,12 +6,13 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class RemoveCommand implements Command {
+public class RemoveCommand implements Command, Serializable {
    private Integer id;
 
     public RemoveCommand() {

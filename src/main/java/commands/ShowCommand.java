@@ -5,12 +5,13 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class ShowCommand implements Command {
+public class ShowCommand implements Command, Serializable {
 
     public ShowCommand() {
     }
@@ -23,7 +24,7 @@ public class ShowCommand implements Command {
     public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
         Hashtable<Integer, Flat> flats = myCollection.getCollection();
-        flats.keySet().stream().map(flats::get).forEach(sb::append);
+        flats.keySet().stream().map(flats::get).forEach(x -> sb.append(x.toString()).append("\n"));
         return sb.toString();
     }
 

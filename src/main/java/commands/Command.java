@@ -7,7 +7,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
-public interface Command {
+public interface Command  {
     String successMessage = "done!\n";
 
     void setArgs(Scanner scanner, PrintStream out, List<String> args)

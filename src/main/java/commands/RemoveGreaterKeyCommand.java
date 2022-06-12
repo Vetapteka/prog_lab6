@@ -6,12 +6,13 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class RemoveGreaterKeyCommand implements Command {
+public class RemoveGreaterKeyCommand implements Command, Serializable {
     private Integer id;
 
     public RemoveGreaterKeyCommand() {

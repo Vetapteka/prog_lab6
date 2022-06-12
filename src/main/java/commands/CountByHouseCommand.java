@@ -6,11 +6,12 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
-public class CountByHouseCommand implements Command {
+public class CountByHouseCommand implements Command , Serializable {
     private House house;
 
     public CountByHouseCommand() {
