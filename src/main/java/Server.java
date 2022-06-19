@@ -3,6 +3,7 @@ import commands.Command;
 import model.MyCollection;
 import org.slf4j.LoggerFactory;
 import utils.Converter;
+import utils.PropertiesManager;
 
 import java.io.*;
 
@@ -14,9 +15,13 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 public class Server {
+    private static String fileName;
+    private static final Properties property = PropertiesManager.getProperties();
+
     private static MyCollection myCollection;
     private static Selector selector;
     private static ByteBuffer buffer;
@@ -26,10 +31,11 @@ public class Server {
     static {
         logger = (Logger) LoggerFactory.getLogger(Server.class);
         try {
-            myCollection = Converter.fromJson("db.json");
+            fileName = property.getProperty("fileName");
+            myCollection = Converter.fromJson(fileName);
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();
-            serverSocket.bind(new InetSocketAddress("localhost", 5454));
+            serverSocket.bind(new InetSocketAddress(property.getProperty("host"), Integer.parseInt(property.getProperty("port"))));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -90,8 +96,10 @@ public class Server {
             client.write(buffer);
             buffer.clear();
 
-            if (command.getName().equals("exit")) {
+
+            if (command.getName().equals(property.getProperty("exitCommandName"))) {
                 logger.info("client disconnected " + client);
+                Converter.toJson(myCollection, fileName);
                 client.close();
             }
         } catch (ClassNotFoundException e) {

@@ -1,11 +1,11 @@
 package commands;
 
 import model.MyCollection;
+import utils.PropertiesManager;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 
@@ -25,7 +25,7 @@ public class ExitCommand implements Command, Serializable {
 
     @Override
     public String getName() {
-        return "exit";
+        return PropertiesManager.getProperties().getProperty("exitCommandName");
     }
 
     @Override
