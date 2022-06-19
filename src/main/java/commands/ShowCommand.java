@@ -24,7 +24,11 @@ public class ShowCommand implements Command, Serializable {
     public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
         Hashtable<Integer, Flat> flats = myCollection.getCollection();
-        flats.keySet().stream().map(flats::get).forEach(x -> sb.append(x.toString()).append("\n"));
+        if (!flats.isEmpty()) {
+            flats.keySet().stream().map(flats::get).forEach(x -> sb.append(x.toString()).append("\n"));
+        } else {
+            sb.append("collection is empty\n");
+        }
         return sb.toString();
     }
 

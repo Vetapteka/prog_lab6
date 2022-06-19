@@ -50,7 +50,6 @@ public class Client {
 
         } while (!command.getName().equals("exit"));
 
-
         client.close();
     }
 
