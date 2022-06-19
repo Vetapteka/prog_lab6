@@ -1,5 +1,7 @@
+import ch.qos.logback.classic.Logger;
 import commands.Command;
 import model.MyCollection;
+import org.slf4j.LoggerFactory;
 import utils.Converter;
 
 import java.io.*;
@@ -15,18 +17,38 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Server {
-    private static final String POISON_PILL = "POISON_PILL";
+    private static MyCollection myCollection;
+    private static Selector selector;
+    private static ByteBuffer buffer;
+    private static ServerSocketChannel serverSocket;
+    private static final Logger logger;
 
-    public static void main(String[] args) throws IOException {
-        Selector selector = Selector.open();
-        ServerSocketChannel serverSocket = ServerSocketChannel.open();
+    static {
+        logger = (Logger) LoggerFactory.getLogger(Server.class);
+        try {
+            myCollection = Converter.fromJson("db.json");
+            selector = Selector.open();
+            serverSocket = ServerSocketChannel.open();
+            serverSocket.bind(new InetSocketAddress("localhost", 5454));
+            serverSocket.configureBlocking(false);
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-        serverSocket.bind(new InetSocketAddress("localhost", 5454));
-        serverSocket.configureBlocking(false);
-        serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            buffer = ByteBuffer.allocate(256000);
 
-        ByteBuffer buffer = ByteBuffer.allocate(256000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static void main(String[] args) {
+        try {
+            acceptingConnections();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void acceptingConnections() throws IOException {
         while (true) {
             selector.select();
             Set<SelectionKey> selectedKeys = selector.selectedKeys();
@@ -46,44 +68,43 @@ public class Server {
         }
     }
 
+
     private static void answer(ByteBuffer buffer, SelectionKey key) throws IOException {
         SocketChannel client = (SocketChannel) key.channel();
         client.read(buffer);
 
-        if (new String(buffer.array()).trim().equals(POISON_PILL)) {
-            client.close();
-            System.out.println("Not accepting client messages anymore");
-        } else {
+        ByteArrayInputStream baos = new ByteArrayInputStream(buffer.array());
+        ObjectInputStream oos = new ObjectInputStream(baos);
+        Command command;
+        try {
+            command = (Command) oos.readObject();
+            logger.info("get a command: " + command.toString());
 
-            MyCollection myCollection = Converter.fromJson("db.json");
+            String res = command.execute(myCollection);
 
-            ByteArrayInputStream baos = new ByteArrayInputStream(buffer.array());
-            ObjectInputStream oos = new ObjectInputStream(baos);
-            Command command = null;
-            try {
-                command = (Command) oos.readObject();
-                String res = command.execute(myCollection);
+            buffer.clear();
+            byte[] aaa = res.getBytes(StandardCharsets.UTF_8);
+            buffer.put(aaa);
 
-                buffer.clear();
-                byte[] aaa = res.getBytes(StandardCharsets.UTF_8);
-                buffer.put(aaa);
+            buffer.flip();
+            client.write(buffer);
+            buffer.clear();
 
-                buffer.flip();
-                client.write(buffer);
-                buffer.clear();
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            if (command.getName().equals("exit")) {
+                logger.info("client disconnected " + client);
+                client.close();
             }
-
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
     }
 
     private static void register(Selector selector, ServerSocketChannel serverSocket) throws IOException {
         SocketChannel client = serverSocket.accept();
+        logger.info("new connection: " + client.toString());
         client.configureBlocking(false);
         client.register(selector, SelectionKey.OP_READ);
     }
-
 
 }
