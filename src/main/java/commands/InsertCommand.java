@@ -19,7 +19,7 @@ public class InsertCommand implements Command, Serializable {
 
     @Override
     public void setArgs(Scanner scanner, PrintStream out, List<String> args)
-            throws IllegalArgumentException, IndexOutOfBoundsException {
+            throws IllegalArgumentException, IndexOutOfBoundsException, NullPointerException {
         id = (Integer) Reader.readParsebleNumber(Integer::parseInt, args.get(1));
         flat = new Flat(scanner, id, out);
     }

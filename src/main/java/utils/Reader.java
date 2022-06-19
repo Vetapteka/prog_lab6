@@ -17,8 +17,8 @@ public class Reader {
 
     public static Command readCommand(Scanner scanner, PrintStream out, LinkedHashMap<String, Command> commands) {
         Command command = null;
-        while (true) {
-            out.print("\n> ");
+        out.print("\n> ");
+        while (scanner.hasNext()) {
             String str = scanner.nextLine();
             String commandName = str.split(" ")[0];
 
@@ -28,14 +28,19 @@ public class Reader {
                     command.setArgs(scanner, out, Arrays.asList(str.split(" ")));
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     out.println("Invalid arguments");
+                    out.print("\n> ");
                     continue;
                 } catch (FileNotFoundException e) {
                     out.println("The file does not open or the file does not exist");
+                    out.print("\n> ");
+
                     continue;
                 }
                 break;
             } else {
                 out.println("No such command " + commandName.split(" ")[0]);
+                out.print("\n> ");
+
             }
         }
         return command;
@@ -54,26 +59,30 @@ public class Reader {
      * @param max      maximum possible value
      * @return validated value
      */
-    public static Number readNumber(Function<String, Number> parser, Scanner scanner, PrintStream out, String startStr, Number min, Number max) {
-        Number res;
+    public static Number readNumber(Function<String, Number> parser, Scanner scanner, PrintStream out, String startStr, Number min, Number max) throws NullPointerException {
+        Number res = null;
         String str;
 
-        while (true) {
-            out.print(startStr);
-
+        out.print(startStr);
+        do {
             try {
                 res = readParsebleNumber(parser, scanner.nextLine());
             } catch (IllegalArgumentException e) {
                 out.println("enter the number in the range " + min + ".." + max);
+                out.print(startStr);
                 continue;
             }
 
             if (res.floatValue() < min.floatValue() || res.floatValue() > max.floatValue()) {
                 out.println("the value must be in the range " + min + ".." + max);
+                out.print(startStr);
                 continue;
             }
             break;
-        }
+        } while (scanner.hasNext());
+
+        if (res == null) throw new NullPointerException();
+
         return res;
     }
 
@@ -86,18 +95,22 @@ public class Reader {
      * @param startStr input prompt
      * @return validated value
      */
-    public static String readString(Scanner scanner, PrintStream out, String startStr) {
-        String res;
-        while (true) {
-            out.print(startStr);
+    public static String readString(Scanner scanner, PrintStream out, String startStr) throws NullPointerException {
+        String res = null;
+        out.print(startStr);
+
+        do {
             try {
                 res = readNotEmptyString(scanner.nextLine());
             } catch (IllegalArgumentException e) {
                 out.println("The string cannot be empty");
+                out.print(startStr);
                 continue;
             }
             break;
-        }
+        } while (scanner.hasNext());
+
+        if (res == null) throw new NullPointerException();
         return res;
     }
 
@@ -109,21 +122,29 @@ public class Reader {
      * @param <T>       enum
      * @return enum value
      */
-    public static <T extends Enum<T>> T readEnum(Class<T> tClass, Scanner scanner, PrintStream out, boolean canBeNull) {
+
+    public static <T extends Enum<T>> T readEnum(Class<T> tClass, Scanner scanner, PrintStream out, boolean canBeNull) throws NullPointerException {
         T res = null;
         String str;
+        String startStr = tClass.getSimpleName() + " (" + Arrays.stream(tClass.getEnumConstants()).map(Object::toString).reduce((x, y) -> x + " | " + y).orElse("") + "): ";
+        out.print(startStr);
+
         do {
-            out.print(tClass.getSimpleName() + " (" + Arrays.stream(tClass.getEnumConstants()).map(Object::toString).reduce((x, y) -> x + " | " + y).orElse("") + "): ");
             str = scanner.nextLine().toUpperCase();
             if (str.equals("") && canBeNull) {
                 str = "NONE";
             }
             try {
                 res = T.valueOf(tClass, str);
+                break;
             } catch (IllegalArgumentException e) {
                 out.println("invalid value");
+                out.print(startStr);
             }
-        } while (res == null);
+
+        } while (scanner.hasNext());
+
+        if (res == null) throw new NullPointerException();
         return res;
     }
 

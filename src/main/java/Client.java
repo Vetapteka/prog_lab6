@@ -1,4 +1,5 @@
 import commands.*;
+import utils.PropertiesManager;
 import utils.Reader;
 
 import java.io.ByteArrayOutputStream;
@@ -9,14 +10,13 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedHashMap;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Client {
     private static final Scanner scanner = new Scanner(System.in);
     private static final PrintStream out = System.out;
-
-
-
+    private static final Properties properties = PropertiesManager.getProperties();
 
     public static void main(String[] args) throws IOException {
 
@@ -24,33 +24,38 @@ public class Client {
         ByteBuffer buffer = ByteBuffer.allocate(256000);
         LinkedHashMap<String, Command> commands = initCommands();
 
-        Command command;
+        Command command = null;
         do {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
 
-            command = Reader.readCommand(scanner, out, commands);
-            oos.writeObject(command);
-            oos.flush();
+            try {
+                command = Reader.readCommand(scanner, out, commands);
+                oos.writeObject(command);
+                oos.flush();
 
 
-            buffer.clear();
-            buffer.put(baos.toByteArray());
-            baos.flush();
-            buffer.flip();
-            client.write(buffer);
-            buffer.clear();
-            client.read(buffer);
-            buffer.flip();
+                buffer.clear();
+                buffer.put(baos.toByteArray());
+                baos.flush();
+                buffer.flip();
+                client.write(buffer);
+                buffer.clear();
+                client.read(buffer);
+                buffer.flip();
 
-            byte[] response = new byte[buffer.limit()];
-            System.arraycopy(buffer.array(), 0, response, 0, buffer.limit());
-            System.out.print(new String(response));
+                byte[] response = new byte[buffer.limit()];
+                System.arraycopy(buffer.array(), 0, response, 0, buffer.limit());
+                System.out.print(new String(response));
 
-            oos.close();
-            baos.close();
+                oos.close();
+                baos.close();
 
-        } while (!command.getName().equals("exit"));
+            } catch (NullPointerException e) {
+                out.println("Invalid argument");
+
+            }
+        } while (command == null || !command.getName().equals(properties.getProperty("exitCommandName")));
 
         client.close();
     }
@@ -60,6 +65,7 @@ public class Client {
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
 
         HelpCommand help = new HelpCommand(commands);
+        ExecuteCommand execute = new ExecuteCommand(commands);
         InfoCommand info = new InfoCommand();
         ExitCommand exit = new ExitCommand();
         InsertCommand insert = new InsertCommand();
@@ -74,6 +80,7 @@ public class Client {
         ReplaceIfLowerCommand replaceIfLower = new ReplaceIfLowerCommand();
         FilterStartNameCommand filterStartName = new FilterStartNameCommand();
 
+        commands.put(execute.getName(), execute);
         commands.put(help.getName(), help);
         commands.put(info.getName(), info);
         commands.put(exit.getName(), exit);
