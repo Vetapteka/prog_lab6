@@ -3,6 +3,7 @@ package commands;
 import model.MyCollection;
 import utils.DatabaseHandler;
 import utils.Hasher;
+import utils.PropertiesManager;
 import utils.Reader;
 
 import java.io.PrintStream;
@@ -33,7 +34,7 @@ public class AuthorizationCommand implements Command, Serializable {
         try {
             Integer userId = DatabaseHandler.findUser(login, password);
 //          TODO загрузить с этим id myColltction и если там null в id, то бросить исключение
-            res = successMessage;
+            res = PropertiesManager.getProperties().getProperty("successAuthorizMess");
         } catch (SQLException | NullPointerException e) {
             res = "invalid login or password";
         }

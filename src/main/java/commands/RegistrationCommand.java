@@ -33,7 +33,7 @@ public class RegistrationCommand implements Command, Serializable {
         DatabaseHandler.connectionToDataBase();
         try {
             DatabaseHandler.registerUser(login, password);
-            res = PropertiesManager.getProperties().getProperty("successAuthorizMess");
+            res = successMessage;
         } catch (SQLException e) {
             res = "user already exists";
         }
