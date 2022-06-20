@@ -17,13 +17,16 @@ public class Client {
     private static final Scanner scanner = new Scanner(System.in);
     private static final PrintStream out = System.out;
     private static final Properties properties = PropertiesManager.getProperties();
+    private static final LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
+
 
     public static void main(String[] args) throws IOException {
 
+
         SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 5454));
         ByteBuffer buffer = ByteBuffer.allocate(256000);
-        LinkedHashMap<String, Command> commands = initCommands();
 
+        initStartCommands();
         Command command = null;
         do {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -44,12 +47,18 @@ public class Client {
                 client.read(buffer);
                 buffer.flip();
 
-                byte[] response = new byte[buffer.limit()];
-                System.arraycopy(buffer.array(), 0, response, 0, buffer.limit());
-                System.out.print(new String(response));
+                byte[] responseByte = new byte[buffer.limit()];
+                System.arraycopy(buffer.array(), 0, responseByte, 0, buffer.limit());
+                String response = new String(responseByte);
+                System.out.print(response);
 
                 oos.close();
                 baos.close();
+
+                if (command instanceof AuthorizationCommand && response
+                        .equals(PropertiesManager.getProperties().getProperty("successAuthorizMess"))){
+                    initAllCommands();
+                }
 
             } catch (NullPointerException e) {
                 out.println("Invalid argument");
@@ -60,14 +69,23 @@ public class Client {
         client.close();
     }
 
-
-    private static LinkedHashMap<String, Command> initCommands() {
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
-
+    private static void initStartCommands() {
+        RegistrationCommand register = new RegistrationCommand();
         HelpCommand help = new HelpCommand(commands);
+        ExitCommand exit = new ExitCommand();
+        AuthorizationCommand logIn = new AuthorizationCommand();
+
+
+        commands.put(register.getName(), register);
+        commands.put(help.getName(), help);
+        commands.put(exit.getName(), exit);
+        commands.put(logIn.getName(), logIn);
+    }
+
+    private static void initAllCommands() {
+
         ExecuteCommand execute = new ExecuteCommand(commands);
         InfoCommand info = new InfoCommand();
-        ExitCommand exit = new ExitCommand();
         InsertCommand insert = new InsertCommand();
         RemoveCommand remove = new RemoveCommand();
         ClearCommand clear = new ClearCommand();
@@ -81,9 +99,7 @@ public class Client {
         FilterStartNameCommand filterStartName = new FilterStartNameCommand();
 
         commands.put(execute.getName(), execute);
-        commands.put(help.getName(), help);
         commands.put(info.getName(), info);
-        commands.put(exit.getName(), exit);
         commands.put(insert.getName(), insert);
         commands.put(remove.getName(), remove);
         commands.put(clear.getName(), clear);
@@ -96,7 +112,6 @@ public class Client {
         commands.put(replaceIfLower.getName(), replaceIfLower);
         commands.put(filterStartName.getName(), filterStartName);
 
-        return commands;
     }
 
 }
