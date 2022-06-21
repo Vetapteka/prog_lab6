@@ -20,14 +20,8 @@ public class DatabaseManager {
 
     //    TODO исправить тут русский текст
 
-    public static void connectionToDataBase() {
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-            System.out.println("подключение установлено");
-        } catch (SQLException e) {
-            System.out.println("ошибка при подключении к базе");
-            e.printStackTrace();
-        }
+    public static void connectionToDataBase() throws SQLException {
+        connection = DriverManager.getConnection(url, username, password);
     }
 
     // TODO добить везде причины исключений где это будет вызываться
@@ -150,13 +144,23 @@ public class DatabaseManager {
         return flatsId;
     }
 
-
-
     public static void deleteUserFlats(User user) throws SQLException {
         String DELETE = "DELETE FROM flats WHERE user_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
         connection.setAutoCommit(false);
         preparedStatement.setInt(1, findUser(user));
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        connection.commit();
+    }
+
+    public static void deleteFlat(User user, int id) throws SQLException {
+
+        String DELETE = "DELETE FROM flats WHERE user_id = ? AND id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+        connection.setAutoCommit(false);
+        preparedStatement.setInt(1, findUser(user));
+        preparedStatement.setInt(2, id);
         preparedStatement.executeUpdate();
         preparedStatement.close();
         connection.commit();
