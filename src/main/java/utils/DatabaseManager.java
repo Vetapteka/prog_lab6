@@ -51,8 +51,6 @@ public class DatabaseManager {
 
 
     public static Integer insertFlat(Flat flat, User user) throws SQLException {
-        int userId = findUser(user);
-
         String INSERT_FLAT = "INSERT INTO flats (id, user_id, flat_name, coor_x, coor_y," +
                 " init_date, area, number_of_rooms, furnish, flat_view, transport, house_name, " +
                 "house_age, house_floor) " +
@@ -61,32 +59,8 @@ public class DatabaseManager {
         PreparedStatement preparedStatement = connection.prepareStatement(INSERT_FLAT);
 
         connection.setAutoCommit(false);
-
-        if (flat.getHouse() != null) {
-
-            preparedStatement.setString(12, flat.getHouse().getName());
-            preparedStatement.setLong(13, flat.getHouse().getYear());
-            preparedStatement.setLong(14, flat.getHouse().getNumberOfFlatsOnFloor());
-        } else {
-            preparedStatement.setNull(12, Types.CHAR);
-            preparedStatement.setNull(13, Types.BIGINT);
-            preparedStatement.setNull(14, Types.BIGINT);
-        }
-
-        preparedStatement.setInt(1, flat.getId()); //id
-        preparedStatement.setInt(2, userId); //user_id
-        preparedStatement.setString(3, flat.getName()); //flat_name
-        preparedStatement.setLong(4, flat.getCoordinates().getX()); //coor_x
-        preparedStatement.setFloat(5, flat.getCoordinates().getY()); //coor_y
-        preparedStatement.setTimestamp(6, Timestamp.from(flat.getCreationDate().toInstant())); //init_date
-        preparedStatement.setLong(7, flat.getArea()); //area
-        preparedStatement.setInt(8, flat.getNumberOfRooms()); //number_of_rooms
-        preparedStatement.setInt(9, flat.getFurnish().ordinal()); //furnish
-        preparedStatement.setInt(10, flat.getView().ordinal()); //flat_view
-        preparedStatement.setInt(11, flat.getTransport().ordinal()); //transport
-
+        setFlat(preparedStatement, flat, user);
         preparedStatement.execute();
-
         connection.setAutoCommit(true);
 
         ResultSet last_updated_ticket = preparedStatement.getResultSet();
@@ -165,5 +139,44 @@ public class DatabaseManager {
         preparedStatement.close();
         connection.commit();
     }
+
+    private static void setFlat(PreparedStatement preparedStatement, Flat flat, User user) throws SQLException {
+        int userId = findUser(user);
+
+        preparedStatement.setInt(1, flat.getId()); //id
+        preparedStatement.setInt(2, userId); //user_id
+        preparedStatement.setString(3, flat.getName()); //flat_name
+        preparedStatement.setLong(4, flat.getCoordinates().getX()); //coor_x
+        preparedStatement.setFloat(5, flat.getCoordinates().getY()); //coor_y
+        preparedStatement.setTimestamp(6, Timestamp.from(flat.getCreationDate().toInstant())); //init_date
+        preparedStatement.setLong(7, flat.getArea()); //area
+        preparedStatement.setInt(8, flat.getNumberOfRooms()); //number_of_rooms
+        preparedStatement.setInt(9, flat.getFurnish().ordinal()); //furnish
+        preparedStatement.setInt(10, flat.getView().ordinal()); //flat_view
+        preparedStatement.setInt(11, flat.getTransport().ordinal()); //transport
+
+        if (flat.getHouse() != null) {
+            preparedStatement.setString(12, flat.getHouse().getName());
+            preparedStatement.setLong(13, flat.getHouse().getYear());
+            preparedStatement.setLong(14, flat.getHouse().getNumberOfFlatsOnFloor());
+        } else {
+            preparedStatement.setNull(12, Types.CHAR);
+            preparedStatement.setNull(13, Types.BIGINT);
+            preparedStatement.setNull(14, Types.BIGINT);
+        }
+
+    }
+
+    public static void updateFlat(User user, Flat flat) throws SQLException {
+        String UPDATE = "UPDATE flats SET id = ?, user_id = ?, flat_name = ?, coor_x = ?, coor_y = ?," +
+                " init_date = ?, area = ?, number_of_rooms = ?, furnish = ?, flat_view = ?, transport = ?," +
+                " house_name = ?, house_age = ?, house_floor = ? WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+        setFlat(preparedStatement, flat, user);
+        preparedStatement.setInt(15, flat.getId());
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+    }
+
 
 }
