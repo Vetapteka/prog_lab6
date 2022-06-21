@@ -7,14 +7,15 @@ import java.io.Serializable;
 import java.util.Scanner;
 
 public class House implements Serializable {
-    private String name; //Поле не может быть null
-    private Long year; //Максимальное значение поля: 550, Значение поля должно быть больше 0
-    private long numberOfFlatsOnFloor; //Значение поля должно быть больше 0
+    private final String name; //Поле не может быть null
+    private final Long year; //Максимальное значение поля: 550, Значение поля должно быть больше 0
+    private final long numberOfFlatsOnFloor; //Значение поля должно быть больше 0
 
-    /**
-     * empty construct for Json {@link utils.Converter}
-     */
-    public House() {
+
+    public House(String name, Long year, long numberOfFlatsOnFloor) {
+        this.name = name;
+        this.year = year;
+        this.numberOfFlatsOnFloor = numberOfFlatsOnFloor;
     }
 
     /**

@@ -7,22 +7,28 @@ import java.io.Serializable;
 import java.util.Scanner;
 
 /**
- *  apartment coordinates
+ * apartment coordinates
  */
 public class Coordinates implements Serializable {
     /**
      * max value is 285
      */
-    private long x;
+    private final long x;
     /**
      * max field value: 76, Field cannot be null
      */
-    private Float y;
+    private final Float y;
+
+    public Coordinates(long x, Float y) {
+        this.x = x;
+        this.y = y;
+    }
 
     /**
      * Initializes a newly created Coordinates object
+     *
      * @param scanner input from where to read values
-     * @param out output from where to request values
+     * @param out     output from where to request values
      */
 
     public Coordinates(Scanner scanner, PrintStream out) {
@@ -31,12 +37,6 @@ public class Coordinates implements Serializable {
 
         y = (Float) Reader.readNumber(Float::parseFloat, scanner, out,
                 "Coordinates y: ", Float.MIN_VALUE, 76);
-    }
-
-    /**
-     * empty construct for Json {@link utils.Converter}
-     */
-    public Coordinates() {
     }
 
     public long getX() {

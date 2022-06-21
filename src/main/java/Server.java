@@ -1,8 +1,8 @@
 import ch.qos.logback.classic.Logger;
 import commands.Command;
-import model.MyCollection;
+import model.Flat;
 import org.slf4j.LoggerFactory;
-import utils.Converter;
+import utils.DatabaseManager;
 import utils.PropertiesManager;
 
 import java.io.*;
@@ -14,6 +14,8 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -22,7 +24,7 @@ public class Server {
     private static String fileName;
     private static final Properties property = PropertiesManager.getProperties();
 
-    private static MyCollection myCollection;
+    private static Hashtable<Integer, Flat> flats;
     private static Selector selector;
     private static ByteBuffer buffer;
     private static ServerSocketChannel serverSocket;
@@ -32,7 +34,9 @@ public class Server {
         logger = (Logger) LoggerFactory.getLogger(Server.class);
         try {
             fileName = property.getProperty("fileName");
-            myCollection = Converter.fromJson(fileName);
+            DatabaseManager.connectionToDataBase();
+            flats = DatabaseManager.getCollection();
+
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();
             serverSocket.bind(new InetSocketAddress(property.getProperty("host"), Integer.parseInt(property.getProperty("port"))));
@@ -42,6 +46,9 @@ public class Server {
             buffer = ByteBuffer.allocate(256000);
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("unable to load collection from db");
             e.printStackTrace();
         }
     }
@@ -86,7 +93,7 @@ public class Server {
             command = (Command) oos.readObject();
             logger.info("get a command: " + command.toString());
 
-            String res = command.execute(myCollection);
+            String res = command.execute(flats);
 
             buffer.clear();
             byte[] aaa = res.getBytes(StandardCharsets.UTF_8);
@@ -99,7 +106,7 @@ public class Server {
 
             if (command.getName().equals(property.getProperty("exitCommandName"))) {
                 logger.info("client disconnected " + client);
-                Converter.toJson(myCollection, fileName);
+//                Converter.toJson(myCollection, fileName);
                 client.close();
             }
         } catch (ClassNotFoundException e) {

@@ -8,51 +8,61 @@ import java.time.ZonedDateTime;
 import java.util.Scanner;
 
 public class Flat implements Serializable, Comparable<Flat> {
+
     /**
      * The value of the field must be greater than 0, The value of this field must be unique, The value of this field must be generated automatically
      */
-    private int id;
+    private final int id;
     /**
      * Field cannot be null, String cannot be empty
      */
-    private String name;
+    private final String name;
     /**
      * Field cannot be null
      */
-    private Coordinates coordinates;
+    private final Coordinates coordinates;
     /**
      * Field cannot be null, The value of this field must be generated automatically
      */
-    private ZonedDateTime creationDate;
+    private final ZonedDateTime creationDate;
     /**
      * Field value must be greater than 0
      */
-    private Long area;
+    private final Long area;
     /**
      * Maximum field value: 10, Field value must be greater than 0
      */
-    private int numberOfRooms;
+    private final int numberOfRooms;
     /**
      * Field can be null
      */
-    private Furnish furnish = null;
+    private final Furnish furnish;
     /**
      * Field cannot be null
      */
-    private View view;
+    private final View view;
     /**
      * Field can be null
      */
-    private Transport transport;
+    private final Transport transport;
     /**
      * Field can be null
      */
-    private House house = null;
+    private final House house;
 
-    /**
-     * empty construct for Json {@link utils.Converter}
-     */
-    public Flat() {
+    public Flat(int id, String name, Coordinates coordinates, ZonedDateTime creationDate,
+                Long area, int numberOfRooms, Furnish furnish, View view,
+                Transport transport, House house) {
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.area = area;
+        this.numberOfRooms = numberOfRooms;
+        this.furnish = furnish;
+        this.view = view;
+        this.transport = transport;
+        this.house = house;
     }
 
     /**
