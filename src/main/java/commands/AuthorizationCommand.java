@@ -29,7 +29,6 @@ public class AuthorizationCommand extends Command {
     @Override
     public String execute(Hashtable<Integer, Flat> flats) {
         String res;
-        DatabaseManager.connectionToDataBase();
         try {
             if (DatabaseManager.findUser(getUser()) != null) {
                 res = PropertiesManager.getProperties().getProperty("successAuthorizMess");

@@ -3,7 +3,6 @@ package commands;
 import model.Flat;
 import model.House;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.List;
@@ -22,7 +21,7 @@ public class CountByHouseCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
         long count = flats.values().stream().map(Flat::getHouse)
                 .filter(x -> x != null && x.compare(house)).count();

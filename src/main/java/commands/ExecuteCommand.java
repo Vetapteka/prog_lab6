@@ -38,14 +38,10 @@ public class ExecuteCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
         awaitingExecutionCommands.forEach(x -> {
-            try {
-                sb.append(x.execute(flats));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            sb.append(x.execute(flats));
         });
         return sb.toString();
     }

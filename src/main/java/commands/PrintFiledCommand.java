@@ -3,7 +3,6 @@ package commands;
 import model.Flat;
 import model.FurnishComparator;
 
-import java.io.FileNotFoundException;
 import java.util.Hashtable;
 
 
@@ -15,7 +14,7 @@ public class PrintFiledCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
         flats.keySet().stream().map(x -> flats.get(x).getFurnish()).sorted(new FurnishComparator()).forEach(sb::append);
         return sb.toString();

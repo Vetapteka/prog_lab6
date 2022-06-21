@@ -2,7 +2,6 @@ package commands;
 
 import model.Flat;
 
-import java.io.FileNotFoundException;
 import java.util.Hashtable;
 
 
@@ -14,7 +13,7 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         return "type: " + flats.getClass().toString() + "\n" +
                 "info of elements: " + flats.size() + "\n";
     }

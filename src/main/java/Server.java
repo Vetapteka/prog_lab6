@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 
 public class Server {
-    private static String fileName;
     private static final Properties property = PropertiesManager.getProperties();
 
     private static Hashtable<Integer, Flat> flats;
@@ -33,9 +32,11 @@ public class Server {
     static {
         logger = (Logger) LoggerFactory.getLogger(Server.class);
         try {
-            fileName = property.getProperty("fileName");
             DatabaseManager.connectionToDataBase();
+            logger.info("successful database connection");
             flats = DatabaseManager.getCollection();
+            logger.info("collection loaded");
+
 
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();
@@ -48,8 +49,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
-            logger.error("unable to load collection from db");
-            e.printStackTrace();
+            logger.error("fail connecting to database");
         }
     }
 

@@ -2,7 +2,6 @@ package commands;
 
 import model.Flat;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -28,7 +27,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         return commandsString;
     }
 

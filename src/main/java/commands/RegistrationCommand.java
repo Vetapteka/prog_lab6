@@ -31,7 +31,6 @@ public class RegistrationCommand extends Command {
     @Override
     public String execute(Hashtable<Integer, Flat> flats) {
         String res;
-        DatabaseManager.connectionToDataBase();
         try {
             DatabaseManager.registerUser(new User(login, password));
             res = this.getSuccessMessage();

@@ -34,10 +34,10 @@ public class InsertCommand extends Command {
             flats.put(id, flat);
             try {
 
-                sb.append(this.getSuccessMessage()).append(DatabaseManager.insertFlat(flat, this.getUser()));
+                sb.append(this.getSuccessMessage()).append("new flat with id: ").append(DatabaseManager.insertFlat(flat, this.getUser()));
 
             } catch (SQLException e) {
-                sb.append("fail!");
+                sb.append(getFailMessage());
             }
         }
         return sb.toString();

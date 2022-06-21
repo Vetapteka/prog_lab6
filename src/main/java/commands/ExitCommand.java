@@ -3,7 +3,6 @@ package commands;
 import model.Flat;
 import utils.PropertiesManager;
 
-import java.io.*;
 import java.util.Hashtable;
 
 public class ExitCommand extends Command {
@@ -14,7 +13,7 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         return "the server disconnects you";
     }
 

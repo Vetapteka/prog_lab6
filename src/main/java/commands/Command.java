@@ -24,10 +24,14 @@ public abstract class Command implements Serializable {
             throws IllegalArgumentException, FileNotFoundException {
     }
 
-    public abstract String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException;
+    public abstract String execute(Hashtable<Integer, Flat> flats);
 
     public String getSuccessMessage() {
         return "done!\n";
+    }
+
+    public String getFailMessage() {
+        return "fail! (smth wrong with database)\n";
     }
 
     public String getName() {

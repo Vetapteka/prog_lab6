@@ -3,7 +3,6 @@ package commands;
 import model.Flat;
 import utils.Reader;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,7 +23,7 @@ public class FilterStartNameCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
         flats.keySet().stream().map(flats::get).filter(x -> x.getName().startsWith(strStartName)).forEach(sb::append);
         return sb.toString();

@@ -3,7 +3,6 @@ package commands;
 import model.Flat;
 import utils.Reader;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,7 +24,7 @@ public class RemoveGreaterKeyCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats)   {
         List<Integer> filterList = flats.keySet().stream().filter(x -> x > id).collect(Collectors.toList());
 //        TODO сюда добавить команду  remove
         filterList.forEach(flats::remove);
