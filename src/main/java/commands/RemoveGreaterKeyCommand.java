@@ -1,13 +1,13 @@
 package commands;
 
 import model.Flat;
+import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RemoveGreaterKeyCommand extends Command {
     private Integer id;
@@ -24,11 +24,27 @@ public class RemoveGreaterKeyCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats)   {
-        List<Integer> filterList = flats.keySet().stream().filter(x -> x > id).collect(Collectors.toList());
-//        TODO сюда добавить команду  remove
-        filterList.forEach(flats::remove);
-        return this.getSuccessMessage();
+    public String execute(Hashtable<Integer, Flat> flats) {
+        String res;
+        try {
+            Set<Integer> flatsId = DatabaseManager.getUserFlatsId(getUser());
+
+            //get user's flatId > entered value
+            flatsId.removeIf(x -> x < id);
+            flatsId.forEach(x -> {
+                try {
+                    DatabaseManager.deleteFlat(getUser(), x);
+                } catch (SQLException ignored) {
+                }
+            });
+            flatsId.forEach(flats::remove);
+            res = this.getSuccessMessage();
+        } catch (SQLException e) {
+            res = getFailMessage();
+        }
+
+        return res;
+
     }
 
 }
