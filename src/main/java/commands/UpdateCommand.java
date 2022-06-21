@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 import utils.Reader;
 
 import java.io.PrintStream;
@@ -27,9 +26,8 @@ public class UpdateCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
         if (flats.containsKey(id)) {
             flats.put(id, flat);
             sb.append(this.getSuccessMessage());

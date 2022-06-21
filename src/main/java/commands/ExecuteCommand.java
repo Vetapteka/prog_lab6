@@ -1,7 +1,7 @@
 package commands;
 
 
-import model.MyCollection;
+import model.Flat;
 import utils.Reader;
 
 import java.io.File;
@@ -38,11 +38,11 @@ public class ExecuteCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         StringBuilder sb = new StringBuilder();
         awaitingExecutionCommands.forEach(x -> {
             try {
-                sb.append(x.execute(myCollection));
+                sb.append(x.execute(flats));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

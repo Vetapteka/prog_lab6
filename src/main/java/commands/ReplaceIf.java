@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 import utils.Reader;
 
 import java.io.PrintStream;
@@ -29,8 +28,7 @@ public abstract class ReplaceIf extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) {
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
 
         if (flats.containsKey(id)) {

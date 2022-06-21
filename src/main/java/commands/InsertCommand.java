@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 import utils.DatabaseManager;
 import utils.Reader;
 
@@ -27,17 +26,15 @@ public class InsertCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) {
+    public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
         if (flats.containsKey(id)) {
             sb.append("the key already exists");
         } else {
             flats.put(id, flat);
-            DatabaseManager.connectionToDataBase();
             try {
 
-                sb.append(this.getSuccessMessage() + DatabaseManager.insertFlat(flat, id));
+                sb.append(this.getSuccessMessage()).append(DatabaseManager.insertFlat(flat, this.getUser()));
 
             } catch (SQLException e) {
                 sb.append("fail!");

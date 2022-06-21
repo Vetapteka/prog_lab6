@@ -1,11 +1,12 @@
 package commands;
 
-import model.MyCollection;
+import model.Flat;
 import model.User;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,7 +24,7 @@ public abstract class Command implements Serializable {
             throws IllegalArgumentException, FileNotFoundException {
     }
 
-    public abstract String execute(MyCollection myCollection) throws FileNotFoundException;
+    public abstract String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException;
 
     public String getSuccessMessage() {
         return "done!\n";

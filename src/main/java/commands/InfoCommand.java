@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
@@ -15,15 +14,9 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
-        StringBuilder sb = new StringBuilder();
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
-
-        sb.append("type: ").append(flats.getClass().toString()).append("\n");
-        sb.append("initialization date: ").append(myCollection.getInitialization_date().toString()).append("\n");
-        sb.append("info of elements: ").append(flats.size()).append("\n");
-
-        return sb.toString();
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
+        return "type: " + flats.getClass().toString() + "\n" +
+                "info of elements: " + flats.size() + "\n";
     }
 
 }

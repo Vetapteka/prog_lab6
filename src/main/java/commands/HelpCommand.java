@@ -1,9 +1,10 @@
 package commands;
 
-import model.MyCollection;
+import model.Flat;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         return commandsString;
     }
 

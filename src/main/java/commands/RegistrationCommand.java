@@ -1,12 +1,14 @@
 package commands;
 
-import model.MyCollection;
+import model.Flat;
+import model.User;
 import utils.DatabaseManager;
 import utils.Hasher;
 import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,11 +29,11 @@ public class RegistrationCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) {
+    public String execute(Hashtable<Integer, Flat> flats) {
         String res;
         DatabaseManager.connectionToDataBase();
         try {
-            DatabaseManager.registerUser(login, password);
+            DatabaseManager.registerUser(new User(login, password));
             res = this.getSuccessMessage();
         } catch (SQLException e) {
             res = "user already exists";

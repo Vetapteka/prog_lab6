@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 import utils.Reader;
 
 import java.io.FileNotFoundException;
@@ -25,8 +24,7 @@ public class RemoveCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         flats.remove(id);
         return this.getSuccessMessage();
     }

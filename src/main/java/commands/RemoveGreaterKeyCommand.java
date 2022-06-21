@@ -1,7 +1,6 @@
 package commands;
 
 import model.Flat;
-import model.MyCollection;
 import utils.Reader;
 
 import java.io.FileNotFoundException;
@@ -26,9 +25,9 @@ public class RemoveGreaterKeyCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         List<Integer> filterList = flats.keySet().stream().filter(x -> x > id).collect(Collectors.toList());
+//        TODO сюда добавить команду  remove
         filterList.forEach(flats::remove);
         return this.getSuccessMessage();
     }

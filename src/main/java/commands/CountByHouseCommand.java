@@ -2,7 +2,6 @@ package commands;
 
 import model.Flat;
 import model.House;
-import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -23,10 +22,8 @@ public class CountByHouseCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         StringBuilder sb = new StringBuilder();
-        Hashtable<Integer, Flat> flats = myCollection.getCollection();
-
         long count = flats.values().stream().map(Flat::getHouse)
                 .filter(x -> x != null && x.compare(house)).count();
         sb.append("There are ").append(count).append(" such houses.");

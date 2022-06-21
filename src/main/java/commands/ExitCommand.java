@@ -1,9 +1,10 @@
 package commands;
 
-import model.MyCollection;
+import model.Flat;
 import utils.PropertiesManager;
 
 import java.io.*;
+import java.util.Hashtable;
 
 public class ExitCommand extends Command {
 
@@ -13,8 +14,7 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public String execute(MyCollection myCollection) throws FileNotFoundException {
-
+    public String execute(Hashtable<Integer, Flat> flats) throws FileNotFoundException {
         return "the server disconnects you";
     }
 
