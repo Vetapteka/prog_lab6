@@ -6,15 +6,15 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
-public class CountByHouseCommand implements Command , Serializable {
+public class CountByHouseCommand extends Command {
     private House house;
 
     public CountByHouseCommand() {
+        super("count_by_house", "display the number of elements whose house field value is equal to the given one");
     }
 
     @Override
@@ -31,17 +31,6 @@ public class CountByHouseCommand implements Command , Serializable {
                 .filter(x -> x != null && x.compare(house)).count();
         sb.append("There are ").append(count).append(" such houses.");
         return sb.toString();
-    }
-
-    @Override
-    public String getName() {
-        return "count_by_house";
-    }
-
-
-    @Override
-    public String getDescription() {
-        return "display the number of elements whose house field value is equal to the given one";
     }
 
 }

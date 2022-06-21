@@ -4,17 +4,17 @@ import model.MyCollection;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class HelpCommand implements Command, Serializable {
+public class HelpCommand extends Command {
 
     private final LinkedHashMap<String, Command> commands;
     private String commandsString;
 
     public HelpCommand(LinkedHashMap<String, Command> commands) {
+        super("help", "display help on available commands");
         this.commands = commands;
     }
 
@@ -29,16 +29,6 @@ public class HelpCommand implements Command, Serializable {
     @Override
     public String execute(MyCollection myCollection) throws FileNotFoundException {
         return commandsString;
-    }
-
-
-    public String getName() {
-        return "help";
-    }
-
-    @Override
-    public String getDescription() {
-        return "display help on available commands";
     }
 
 }

@@ -1,23 +1,22 @@
 package commands;
 
 import model.MyCollection;
-import utils.DatabaseHandler;
+import utils.DatabaseManager;
 import utils.Hasher;
-import utils.PropertiesManager;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-public class RegistrationCommand implements Command, Serializable {
+public class RegistrationCommand extends Command {
 
     private String login;
     private String password;
 
     public RegistrationCommand() {
+        super("register", "[register] <login> <password>");
     }
 
     @Override
@@ -30,23 +29,14 @@ public class RegistrationCommand implements Command, Serializable {
     @Override
     public String execute(MyCollection myCollection) {
         String res;
-        DatabaseHandler.connectionToDataBase();
+        DatabaseManager.connectionToDataBase();
         try {
-            DatabaseHandler.registerUser(login, password);
-            res = successMessage;
+            DatabaseManager.registerUser(login, password);
+            res = this.getSuccessMessage();
         } catch (SQLException e) {
             res = "user already exists";
         }
         return res;
     }
 
-    @Override
-    public String getName() {
-        return "register";
-    }
-
-    @Override
-    public String getDescription() {
-        return "<login> <password>";
-    }
 }

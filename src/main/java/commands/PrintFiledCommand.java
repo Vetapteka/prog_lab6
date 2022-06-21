@@ -5,20 +5,14 @@ import model.FurnishComparator;
 import model.MyCollection;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Scanner;
 
 
-public class PrintFiledCommand implements Command, Serializable {
+public class PrintFiledCommand extends Command {
 
     public PrintFiledCommand() {
-    }
-
-    @Override
-    public void setArgs(Scanner scanner, PrintStream out, List<String> args) {
+        super("print_field_descending_furnish", "print the furnish field" +
+                " values of all elements in descending order");
     }
 
     @Override
@@ -29,14 +23,4 @@ public class PrintFiledCommand implements Command, Serializable {
         return sb.toString();
     }
 
-
-    @Override
-    public String getName() {
-        return "print_field_descending_furnish";
-    }
-
-    @Override
-    public String getDescription() {
-        return "print the furnish field values of all elements in descending order";
-    }
 }

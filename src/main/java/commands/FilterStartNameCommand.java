@@ -6,16 +6,17 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class FilterStartNameCommand implements Command, Serializable {
+public class FilterStartNameCommand extends Command {
     private String strStartName;
 
     public FilterStartNameCommand() {
+        super("filter_starts_with_name",
+                "display elements whose name field value starts with the given substring");
     }
 
     @Override
@@ -31,15 +32,4 @@ public class FilterStartNameCommand implements Command, Serializable {
         return sb.toString();
     }
 
-
-    @Override
-    public String getName() {
-        return "filter_starts_with_name";
-    }
-
-
-    @Override
-    public String getDescription() {
-        return "display elements whose name field value starts with the given substring";
-    }
 }

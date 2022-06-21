@@ -1,23 +1,23 @@
 package commands;
 
 import model.MyCollection;
-import utils.DatabaseHandler;
+import utils.DatabaseManager;
 import utils.Hasher;
 import utils.PropertiesManager;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-public class AuthorizationCommand implements Command, Serializable {
+public class AuthorizationCommand extends Command {
 
     private String login;
     private String password;
 
     public AuthorizationCommand() {
+        super("log_in", "<login> <password>");
     }
 
     @Override
@@ -30,9 +30,9 @@ public class AuthorizationCommand implements Command, Serializable {
     @Override
     public String execute(MyCollection myCollection) {
         String res;
-        DatabaseHandler.connectionToDataBase();
+        DatabaseManager.connectionToDataBase();
         try {
-            Integer userId = DatabaseHandler.findUser(login, password);
+            Integer userId = DatabaseManager.findUser(login, password);
 //          TODO загрузить с этим id myColltction и если там null в id, то бросить исключение
             res = PropertiesManager.getProperties().getProperty("successAuthorizMess");
         } catch (SQLException | NullPointerException e) {
@@ -41,13 +41,4 @@ public class AuthorizationCommand implements Command, Serializable {
         return res;
     }
 
-    @Override
-    public String getName() {
-        return "log_in";
-    }
-
-    @Override
-    public String getDescription() {
-        return "<login> <password>";
-    }
 }

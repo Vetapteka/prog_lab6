@@ -1,4 +1,5 @@
 import commands.*;
+import model.User;
 import utils.PropertiesManager;
 import utils.Reader;
 
@@ -56,8 +57,9 @@ public class Client {
                 baos.close();
 
                 if (command instanceof AuthorizationCommand && response
-                        .equals(PropertiesManager.getProperties().getProperty("successAuthorizMess"))){
-                    initAllCommands();
+                        .equals(PropertiesManager.getProperties().getProperty("successAuthorizMess"))) {
+                    initAllCommands(command.getUser());
+
                 }
 
             } catch (NullPointerException e) {
@@ -82,7 +84,7 @@ public class Client {
         commands.put(logIn.getName(), logIn);
     }
 
-    private static void initAllCommands() {
+    private static void initAllCommands(User user) {
 
         ExecuteCommand execute = new ExecuteCommand(commands);
         InfoCommand info = new InfoCommand();
@@ -112,6 +114,7 @@ public class Client {
         commands.put(replaceIfLower.getName(), replaceIfLower);
         commands.put(filterStartName.getName(), filterStartName);
 
+        commands.values().forEach(x -> x.setUser(user));
     }
 
 }

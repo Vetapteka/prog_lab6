@@ -6,16 +6,16 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class RemoveCommand implements Command, Serializable {
-   private Integer id;
+public class RemoveCommand extends Command {
+    private Integer id;
 
     public RemoveCommand() {
+        super("remove", "remove an element from a collection by its key");
     }
 
     @Override
@@ -28,17 +28,7 @@ public class RemoveCommand implements Command, Serializable {
     public String execute(MyCollection myCollection) throws FileNotFoundException {
         Hashtable<Integer, Flat> flats = myCollection.getCollection();
         flats.remove(id);
-        return successMessage;
+        return this.getSuccessMessage();
     }
 
-
-    @Override
-    public String getName() {
-        return "remove";
-    }
-
-    @Override
-    public String getDescription() {
-        return "remove an element from a collection by its key";
-    }
 }

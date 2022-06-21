@@ -6,16 +6,17 @@ import utils.Reader;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class RemoveGreaterKeyCommand implements Command, Serializable {
+public class RemoveGreaterKeyCommand extends Command {
     private Integer id;
 
     public RemoveGreaterKeyCommand() {
+        super("remove_greater_key", "remove from the collection " +
+                "all elements whose key is greater than the given one");
     }
 
     @Override
@@ -29,16 +30,7 @@ public class RemoveGreaterKeyCommand implements Command, Serializable {
         Hashtable<Integer, Flat> flats = myCollection.getCollection();
         List<Integer> filterList = flats.keySet().stream().filter(x -> x > id).collect(Collectors.toList());
         filterList.forEach(flats::remove);
-        return successMessage;
+        return this.getSuccessMessage();
     }
 
-    @Override
-    public String getName() {
-        return "remove_greater_key";
-    }
-
-    @Override
-    public String getDescription() {
-        return "remove from the collection all elements whose key is greater than the given one";
-    }
 }

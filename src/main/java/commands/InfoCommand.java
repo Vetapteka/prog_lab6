@@ -4,20 +4,14 @@ import model.Flat;
 import model.MyCollection;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Scanner;
 
 
-public class InfoCommand implements Command, Serializable {
+public class InfoCommand extends Command {
 
     public InfoCommand() {
-    }
-
-    @Override
-    public void setArgs(Scanner scanner, PrintStream out, List<String> args) {
+        super("info", "print information about the collection to the " +
+                "standard output stream (type, initialization date, number of elements, etc.)");
     }
 
     @Override
@@ -32,13 +26,4 @@ public class InfoCommand implements Command, Serializable {
         return sb.toString();
     }
 
-    @Override
-    public String getName() {
-        return "info";
-    }
-
-    @Override
-    public String getDescription() {
-        return "print information about the collection to the standard output stream (type, initialization date, number of elements, etc.)";
-    }
 }

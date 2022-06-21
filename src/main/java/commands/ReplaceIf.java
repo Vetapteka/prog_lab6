@@ -5,23 +5,23 @@ import model.MyCollection;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
 
-public abstract class ReplaceIf implements Command, Serializable {
+public abstract class ReplaceIf extends Command {
 
     private Integer id;
-   private Flat flat;
+    private Flat flat;
 
-    public ReplaceIf() {
+    public ReplaceIf(String name, String description) {
+        super(name, description);
     }
 
     @Override
     public void setArgs(Scanner scanner, PrintStream out, List<String> args)
-            throws IllegalArgumentException, IndexOutOfBoundsException, NullPointerException  {
+            throws IllegalArgumentException, IndexOutOfBoundsException, NullPointerException {
 
         id = (Integer) Reader.readParsebleNumber(Integer::parseInt, args.get(1));
         flat = new Flat(scanner, id, out);
@@ -40,12 +40,11 @@ public abstract class ReplaceIf implements Command, Serializable {
                 sb.append("Change!\n");
             }
             sb.append("No change!\n");
-            sb.append(successMessage);
+            sb.append(this.getSuccessMessage());
 
         } else sb.append("no such flat");
         return sb.toString();
     }
-
 
     abstract boolean checkCompareResult(int compareResult);
 }

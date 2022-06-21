@@ -4,16 +4,12 @@ import model.MyCollection;
 import utils.PropertiesManager;
 
 import java.io.*;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
 
+public class ExitCommand extends Command {
 
-public class ExitCommand implements Command, Serializable {
-
-    @Override
-    public void setArgs(Scanner scanner, PrintStream out, List<String> args) {
-
+    public ExitCommand() {
+        super(PropertiesManager.getProperties().getProperty("exitCommandName"),
+                "terminate program (without saving to file)");
     }
 
     @Override
@@ -22,14 +18,4 @@ public class ExitCommand implements Command, Serializable {
         return "the server disconnects you";
     }
 
-
-    @Override
-    public String getName() {
-        return PropertiesManager.getProperties().getProperty("exitCommandName");
-    }
-
-    @Override
-    public String getDescription() {
-        return "terminate program (without saving to file)";
-    }
 }

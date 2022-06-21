@@ -2,19 +2,21 @@ package commands;
 
 import model.Flat;
 import model.MyCollection;
+import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
-public class InsertCommand implements Command, Serializable {
+public class InsertCommand extends Command {
     Integer id;
     Flat flat;
 
     public InsertCommand() {
+        super("insert", "add new element with given key");
     }
 
     @Override
@@ -32,18 +34,16 @@ public class InsertCommand implements Command, Serializable {
             sb.append("the key already exists");
         } else {
             flats.put(id, flat);
-            sb.append(successMessage);
+            DatabaseManager.connectionToDataBase();
+            try {
+
+                sb.append(this.getSuccessMessage() + DatabaseManager.insertFlat(flat, id));
+
+            } catch (SQLException e) {
+                sb.append("fail!");
+            }
         }
         return sb.toString();
     }
 
-    @Override
-    public String getName() {
-        return "insert";
-    }
-
-    @Override
-    public String getDescription() {
-        return "add new element with given key";
-    }
 }
