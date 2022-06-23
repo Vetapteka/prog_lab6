@@ -16,22 +16,34 @@ import java.util.Scanner;
 
 public class Client {
     private static final Scanner scanner = new Scanner(System.in);
+    private static final String serverDisconnectMess = "server side error";
     private static final PrintStream out = System.out;
     private static final Properties properties = PropertiesManager.getProperties();
     private static final LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
 
-        SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 5454));
+        SocketChannel client = null;
+        try {
+            client = SocketChannel.open(new InetSocketAddress("localhost", 5454));
+        } catch (IOException e) {
+            System.out.println(serverDisconnectMess);
+            System.exit(1);
+        }
         ByteBuffer buffer = ByteBuffer.allocate(256000);
 
         initStartCommands();
         Command command = null;
         do {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            ObjectOutputStream oos = null;
+            try {
+                oos = new ObjectOutputStream(baos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             try {
                 command = Reader.readCommand(scanner, out, commands);
@@ -62,13 +74,18 @@ public class Client {
 
                 }
 
-            } catch (NullPointerException e) {
+            } catch (NullPointerException  e) {
                 out.println("Invalid argument");
-
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } while (command == null || !command.getName().equals(properties.getProperty("exitCommandName")));
 
-        client.close();
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void initStartCommands() {

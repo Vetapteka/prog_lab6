@@ -15,7 +15,7 @@ public class InfoCommand extends Command {
     @Override
     public String execute(Hashtable<Integer, Flat> flats) {
         return "type: " + flats.getClass().toString() + "\n" +
-                "info of elements: " + flats.size() + "\n";
+                "number of elements: " + flats.size() + "\n";
     }
 
 }

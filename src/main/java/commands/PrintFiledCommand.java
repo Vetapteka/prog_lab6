@@ -16,7 +16,7 @@ public class PrintFiledCommand extends Command {
     @Override
     public String execute(Hashtable<Integer, Flat> flats) {
         StringBuilder sb = new StringBuilder();
-        flats.keySet().stream().map(x -> flats.get(x).getFurnish()).sorted(new FurnishComparator()).forEach(sb::append);
+        flats.keySet().stream().map(x -> flats.get(x).getFurnish()).sorted(new FurnishComparator()).forEach(x -> sb.append(x).append(" "));
         return sb.toString();
     }
 
