@@ -19,107 +19,176 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.*;
+
 
 public class Server {
     private static final Properties property = PropertiesManager.getProperties();
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(Server.class);
 
     private static Hashtable<Integer, Flat> flats;
+
     private static Selector selector;
-    private static ByteBuffer buffer;
     private static ServerSocketChannel serverSocket;
-    private static final Logger logger;
+
+    private static class Request {
+        private final SelectionKey key;
+        private final Command command;
+
+        public Request(SelectionKey key, Command command) {
+            this.key = key;
+            this.command = command;
+        }
+
+        public SelectionKey getKey() {
+            return key;
+        }
+
+        public Command getCommand() {
+            return command;
+        }
+
+    }
+
+    private static final LinkedBlockingDeque<SelectionKey> clients = new LinkedBlockingDeque<>(6);
+    private static final LinkedBlockingDeque<Request> req = new LinkedBlockingDeque<>(6);
+
+    private static final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
+    private static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+    public static final ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+
 
     static {
-        logger = (Logger) LoggerFactory.getLogger(Server.class);
         try {
             DatabaseManager.connectionToDataBase();
             logger.info("successful database connection");
             flats = DatabaseManager.getCollection();
             logger.info("collection loaded");
 
-
             selector = Selector.open();
             serverSocket = ServerSocketChannel.open();
-            serverSocket.bind(new InetSocketAddress(property.getProperty("host"), Integer.parseInt(property.getProperty("port"))));
+            serverSocket.bind(new InetSocketAddress(property.getProperty("host"),
+                    Integer.parseInt(property.getProperty("port"))));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-            buffer = ByteBuffer.allocate(256000);
 
         } catch (IOException e) {
+            logger.error("unable to connect");
             e.printStackTrace();
+
         } catch (SQLException e) {
             logger.error("fail connecting to database");
         }
     }
 
     public static void main(String[] args) {
-        try {
-            acceptingConnections();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+        //два потока собирают клиентов в очередь
+        fixedThreadPool.submit(() ->
+        {
+            while (true) {
+                selector.select();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> iter = selectedKeys.iterator();
 
-    private static void acceptingConnections() throws IOException {
-        while (true) {
-            selector.select();
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iter = selectedKeys.iterator();
-
-            while (iter.hasNext()) {
-                SelectionKey key = iter.next();
-                if (key.isAcceptable()) {
-                    register(selector, serverSocket);
+                while (iter.hasNext()) {
+                    SelectionKey key = iter.next();
+                    if (key.isAcceptable()) {
+                        SocketChannel client = serverSocket.accept();
+                        logger.info("new connection: " + client);
+                        client.configureBlocking(false);
+                        client.register(selector, SelectionKey.OP_READ);
+                    }
+                    if (key.isReadable()) {
+                        SocketChannel client = (SocketChannel) key.channel();
+                        if (clients.offer(key)) {
+                            logger.info("new request from: " + client);
+                            client.register(selector, SelectionKey.OP_WRITE);
+                        } else {
+                            logger.warn("clients limit exceeded!");
+                            client.close();
+                        }
+                    }
+                    iter.remove();
                 }
+            }
 
-                if (key.isReadable()) {
-                    answer(buffer, key);
+        });
+        //вынимает из очереди клиента и читает его запрос
+        // складывает запрос в другую очередь
+        cachedThreadPool.submit(() ->
+        {
+            while (true) {
+                SelectionKey key;
+                try {
+                    key = clients.poll(10, TimeUnit.MINUTES);
+
+                    SocketChannel client = (SocketChannel) key.channel();
+
+                    ByteBuffer buffer = ByteBuffer.allocate(256000);
+                    client.read(buffer);
+
+                    ByteArrayInputStream baos = new ByteArrayInputStream(buffer.array());
+                    ObjectInputStream oos = new ObjectInputStream(baos);
+                    Command command;
+                    command = (Command) oos.readObject();
+
+                    if (req.offer(new Request(key, command), 4, TimeUnit.SECONDS)) {
+                        logger.info("get a command: " + command.toString() + " ---client---" + client);
+                    } else {
+                        logger.warn("requests limit exceeded!");
+                        client.close();
+                    }
+
+
+                    oos.close();
+                    baos.close();
+
+
+                } catch (InterruptedException e) {
+                    logger.error("problem with multithreading");
+                } catch (ClassNotFoundException | IOException e) {
+                    logger.error("unable to read command!");
                 }
-                iter.remove();
             }
-        }
-    }
+        });
 
+// вынимает  из очереди запрос и отправить ответ клиенту
+        forkJoinPool.execute(() ->
+        {
+            while (true) {
+                try {
+                    Request request = req.poll(10, TimeUnit.MINUTES);
+                    SelectionKey key = request.getKey();
+                    SocketChannel client = (SocketChannel) key.channel();
+                    Command command = request.getCommand();
 
-    private static void answer(ByteBuffer buffer, SelectionKey key) throws IOException {
-        SocketChannel client = (SocketChannel) key.channel();
-        client.read(buffer);
+                    ByteBuffer buffer2 = ByteBuffer.allocate(256000);
+                    String res = command.execute(flats);
 
-        ByteArrayInputStream baos = new ByteArrayInputStream(buffer.array());
-        ObjectInputStream oos = new ObjectInputStream(baos);
-        Command command;
-        try {
-            command = (Command) oos.readObject();
-            logger.info("get a command: " + command.toString());
+                    buffer2.clear();
+                    buffer2.put(res.getBytes(StandardCharsets.UTF_8));
+                    buffer2.flip();
+                    client.write(buffer2);
+                    buffer2.clear();
 
-            String res = command.execute(flats);
+                    client.register(selector, SelectionKey.OP_READ);
 
-            buffer.clear();
-            byte[] aaa = res.getBytes(StandardCharsets.UTF_8);
-            buffer.put(aaa);
+                    logger.info("send a response: " + client);
 
-            buffer.flip();
-            client.write(buffer);
-            buffer.clear();
+                    if (command.getName().equals(property.getProperty("exitCommandName"))) {
+                        logger.info("client disconnected " + client);
+                        client.close();
+                    }
 
+                } catch (InterruptedException e) {
+                    logger.error("problem with multithreading");
+                } catch (IOException e) {
+                    logger.error("unable to write swth to  client!");
 
-            if (command.getName().equals(property.getProperty("exitCommandName"))) {
-                logger.info("client disconnected " + client);
-//                Converter.toJson(myCollection, fileName);
-                client.close();
+                }
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        });
 
     }
-
-    private static void register(Selector selector, ServerSocketChannel serverSocket) throws IOException {
-        SocketChannel client = serverSocket.accept();
-        logger.info("new connection: " + client.toString());
-        client.configureBlocking(false);
-        client.register(selector, SelectionKey.OP_READ);
-    }
-
 }
