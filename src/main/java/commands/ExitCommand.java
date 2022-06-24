@@ -1,9 +1,7 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import utils.PropertiesManager;
-
-import java.util.Hashtable;
 
 public class ExitCommand extends Command {
 
@@ -13,7 +11,7 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         return "the server disconnects you";
     }
 

@@ -1,8 +1,6 @@
 package commands;
 
-import model.Flat;
-
-import java.util.Hashtable;
+import model.MyCollection;
 
 
 public class ShowCommand extends Command {
@@ -12,10 +10,10 @@ public class ShowCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        if (!flats.isEmpty()) {
-            flats.keySet().stream().map(flats::get).forEach(x -> sb.append(x.toString()).append("\n"));
+        if (!myCollection.isEmpty()) {
+            myCollection.show(sb);
         } else {
             sb.append("collection is empty\n");
         }

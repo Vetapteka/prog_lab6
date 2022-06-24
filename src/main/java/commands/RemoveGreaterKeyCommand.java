@@ -1,13 +1,12 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class RemoveGreaterKeyCommand extends Command {
     private Integer id;
@@ -24,7 +23,7 @@ public class RemoveGreaterKeyCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         String res;
         try {
             Set<Integer> flatsId = DatabaseManager.getUserFlatsId(getUser());
@@ -37,7 +36,7 @@ public class RemoveGreaterKeyCommand extends Command {
                 } catch (SQLException ignored) {
                 }
             });
-            flatsId.forEach(flats::remove);
+            flatsId.forEach(myCollection::remove);
             res = this.getSuccessMessage();
         } catch (SQLException e) {
             res = getFailMessage();

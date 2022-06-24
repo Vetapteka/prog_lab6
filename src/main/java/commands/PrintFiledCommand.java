@@ -1,9 +1,7 @@
 package commands;
 
-import model.Flat;
 import model.FurnishComparator;
-
-import java.util.Hashtable;
+import model.MyCollection;
 
 
 public class PrintFiledCommand extends Command {
@@ -14,9 +12,9 @@ public class PrintFiledCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        flats.keySet().stream().map(x -> flats.get(x).getFurnish()).sorted(new FurnishComparator()).forEach(x -> sb.append(x).append(" "));
+        myCollection.printField(sb);
         return sb.toString();
     }
 

@@ -1,10 +1,9 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import utils.DatabaseManager;
 
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.Set;
 
 
@@ -15,11 +14,11 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         String res;
         try {
             Set<Integer> flatsId = DatabaseManager.getUserFlatsId(getUser());
-            flats.entrySet().removeIf(e -> flatsId.contains(e.getKey()));
+            myCollection.clear(flatsId);
             DatabaseManager.deleteUserFlats(getUser());
             res = this.getSuccessMessage();
         } catch (SQLException e) {

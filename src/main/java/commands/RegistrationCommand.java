@@ -1,6 +1,6 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import model.User;
 import utils.DatabaseManager;
 import utils.Hasher;
@@ -8,7 +8,6 @@ import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -29,7 +28,7 @@ public class RegistrationCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         String res;
         try {
             DatabaseManager.registerUser(new User(login, password));

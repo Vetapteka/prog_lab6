@@ -1,12 +1,12 @@
 package commands;
 
 import model.Flat;
+import model.MyCollection;
 import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -31,18 +31,18 @@ public abstract class Replace extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
 
-        if (flats.containsKey(id)) {
-            int compareRes = flat.compareTo(flats.get(id));
+        if (myCollection.containsKey(id)) {
+            int compareRes = flat.compareTo(myCollection.get(id));
             if (checkCompareResult(compareRes)) {
 
                 try {
                     Set<Integer> flatsId = DatabaseManager.getUserFlatsId(getUser());
                     if (flatsId.contains(id)) {
                         DatabaseManager.updateFlat(getUser(), flat);
-                        flats.replace(id, flat);
+                        myCollection.replace(id, flat);
                         sb.append(getSuccessMessage());
                     } else {
                         sb.append("it's not yours\n");

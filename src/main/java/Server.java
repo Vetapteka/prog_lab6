@@ -1,6 +1,6 @@
 import ch.qos.logback.classic.Logger;
 import commands.Command;
-import model.Flat;
+import model.MyCollection;
 import org.slf4j.LoggerFactory;
 import utils.DatabaseManager;
 import utils.PropertiesManager;
@@ -15,7 +15,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -26,7 +25,8 @@ public class Server {
     private static final Properties property = PropertiesManager.getProperties();
     private static final Logger logger = (Logger) LoggerFactory.getLogger(Server.class);
 
-    private static Hashtable<Integer, Flat> flats;
+    private static MyCollection myCollection;
+
 
     private static Selector selector;
     private static ServerSocketChannel serverSocket;
@@ -62,7 +62,7 @@ public class Server {
         try {
             DatabaseManager.connectionToDataBase();
             logger.info("successful database connection");
-            flats = DatabaseManager.getCollection();
+            myCollection = new MyCollection(DatabaseManager.getCollection());
             logger.info("collection loaded");
 
             selector = Selector.open();
@@ -161,10 +161,12 @@ public class Server {
                     Request request = req.poll(10, TimeUnit.MINUTES);
                     SelectionKey key = request.getKey();
                     SocketChannel client = (SocketChannel) key.channel();
+                    ByteBuffer buffer2 = ByteBuffer.allocate(256000);
+
                     Command command = request.getCommand();
 
-                    ByteBuffer buffer2 = ByteBuffer.allocate(256000);
-                    String res = command.execute(flats);
+                    String res = command.execute(myCollection);
+
 
                     buffer2.clear();
                     buffer2.put(res.getBytes(StandardCharsets.UTF_8));

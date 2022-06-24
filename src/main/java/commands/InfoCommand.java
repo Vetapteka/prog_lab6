@@ -1,8 +1,6 @@
 package commands;
 
-import model.Flat;
-
-import java.util.Hashtable;
+import model.MyCollection;
 
 
 public class InfoCommand extends Command {
@@ -13,9 +11,8 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
-        return "type: " + flats.getClass().toString() + "\n" +
-                "number of elements: " + flats.size() + "\n";
+    public String execute(MyCollection myCollection) {
+        return myCollection.info();
     }
 
 }

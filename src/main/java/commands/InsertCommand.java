@@ -1,12 +1,12 @@
 package commands;
 
 import model.Flat;
+import model.MyCollection;
 import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,12 +26,12 @@ public class InsertCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        if (flats.containsKey(id)) {
+        if (myCollection.containsKey(id)) {
             sb.append("the key already exists");
         } else {
-            flats.put(id, flat);
+            myCollection.put(id, flat);
             try {
 
                 sb.append(this.getSuccessMessage()).append("new flat with id: ").append(DatabaseManager.insertFlat(flat, this.getUser()));

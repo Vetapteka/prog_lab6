@@ -1,10 +1,9 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import utils.Reader;
 
 import java.io.PrintStream;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,9 +22,9 @@ public class FilterStartNameCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        flats.keySet().stream().map(flats::get).filter(x -> x.getName().startsWith(strStartName)).forEach(sb::append);
+        myCollection.filterStartName(strStartName, sb);
         return sb.toString();
     }
 

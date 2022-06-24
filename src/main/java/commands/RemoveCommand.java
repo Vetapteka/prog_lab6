@@ -1,12 +1,11 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 import utils.DatabaseManager;
 import utils.Reader;
 
 import java.io.PrintStream;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -26,14 +25,14 @@ public class RemoveCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         String res;
 
         try {
             Set<Integer> flatsId = DatabaseManager.getUserFlatsId(getUser());
             if (flatsId.contains(id)) {
                 DatabaseManager.deleteFlat(getUser(), id);
-                flats.remove(id);
+                myCollection.remove(id);
                 res = this.getSuccessMessage();
             } else {
                 res = "no such flat or it's not your";

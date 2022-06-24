@@ -2,9 +2,9 @@ package commands;
 
 import model.Flat;
 import model.House;
+import model.MyCollection;
 
 import java.io.PrintStream;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,10 +21,9 @@ public class CountByHouseCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        long count = flats.values().stream().map(Flat::getHouse)
-                .filter(x -> x != null && x.compare(house)).count();
+        long count = myCollection.countByHouseName(house);
         sb.append("There are ").append(count).append(" such houses.");
         return sb.toString();
     }

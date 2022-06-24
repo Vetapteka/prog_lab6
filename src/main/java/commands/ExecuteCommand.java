@@ -1,7 +1,7 @@
 package commands;
 
 
-import model.Flat;
+import model.MyCollection;
 import utils.Reader;
 
 import java.io.File;
@@ -38,11 +38,9 @@ public class ExecuteCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         StringBuilder sb = new StringBuilder();
-        awaitingExecutionCommands.forEach(x -> {
-            sb.append(x.execute(flats));
-        });
+        awaitingExecutionCommands.forEach(x -> sb.append(x.execute(myCollection)));
         return sb.toString();
     }
 

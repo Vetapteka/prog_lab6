@@ -1,9 +1,8 @@
 package commands;
 
-import model.Flat;
+import model.MyCollection;
 
 import java.io.PrintStream;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -27,7 +26,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public String execute(Hashtable<Integer, Flat> flats) {
+    public String execute(MyCollection myCollection) {
         return commandsString;
     }
 
